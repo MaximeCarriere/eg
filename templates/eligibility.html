@@ -1,0 +1,93 @@
+{# templates/eligibility.html #}
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <h2 class="card-title mb-4 text-center">Prüfung der Anspruchsvoraussetzungen</h2>
+        <form method="POST" novalidate>
+          {{ form.hidden_tag() }}
+
+          <!-- Staatsangehörigkeit -->
+          <div class="mb-4">
+            <label for="{{ form.citizenship.id }}" class="form-label">{{ form.citizenship.label.text }}</label>
+            {{ form.citizenship(class_="form-select") }}
+            {% for err in form.citizenship.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Aufenthaltstitel (Nur relevant, wenn Nicht-EU) -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.residence_permit.label.text }}</label>
+            <div>
+              {% for subfield in form.residence_permit %}
+                <div class="form-check form-check-inline">
+                  {{ subfield(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ subfield.id }}">{{ subfield.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.residence_permit.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Lebe ich mit dem Kind -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.lives_with_child.label.text }}</label>
+            <div>
+              {% for subfield in form.lives_with_child %}
+                <div class="form-check form-check-inline">
+                  {{ subfield(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ subfield.id }}">{{ subfield.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.lives_with_child.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Betreue ich das Kind persönlich -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.cares_for_child.label.text }}</label>
+            <div>
+              {% for subfield in form.cares_for_child %}
+                <div class="form-check form-check-inline">
+                  {{ subfield(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ subfield.id }}">{{ subfield.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.cares_for_child.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Arbeite ich > 32 Stunden -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.plans_to_work_more_than_32h.label.text }}</label>
+            <div>
+              {% for subfield in form.plans_to_work_more_than_32h %}
+                <div class="form-check form-check-inline">
+                  {{ subfield(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ subfield.id }}">{{ subfield.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.plans_to_work_more_than_32h.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Weiter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

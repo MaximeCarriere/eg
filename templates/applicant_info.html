@@ -1,0 +1,123 @@
+{# templates/applicant_info.html #}
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <h2 class="card-title mb-4 text-center">Schritt 2: Angaben zum Antragstellenden</h2>
+        <form method="POST" novalidate>
+          {{ form.hidden_tag() }}
+
+          <!-- Other-parent status (Alleinerziehend / Both / Other already applied) -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.other_parent_status.label.text }}</label>
+            <div>
+              {% for sub in form.other_parent_status %}
+                <div class="form-check form-check-inline">
+                  {{ sub(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.other_parent_status.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- First Name -->
+          <div class="mb-3">
+            <label class="form-label">{{ form.vorname.label.text }}</label>
+            {{ form.vorname(class_="form-control", placeholder="Vorname") }}
+            {% for err in form.vorname.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Last Name -->
+          <div class="mb-3">
+            <label class="form-label">{{ form.nachname.label.text }}</label>
+            {{ form.nachname(class_="form-control", placeholder="Nachname") }}
+            {% for err in form.nachname.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Birth Date -->
+          <div class="mb-3">
+            <label class="form-label">{{ form.geburtsdatum.label.text }}</label>
+            {{ form.geburtsdatum(class_="form-control") }}
+            {% for err in form.geburtsdatum.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Gender -->
+          <div class="mb-3">
+            <label class="form-label">{{ form.geschlecht.label.text }}</label>
+            {{ form.geschlecht(class_="form-select") }}
+            {% for err in form.geschlecht.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Steuer-ID -->
+          <div class="mb-3">
+            <label class="form-label">{{ form.steuer_id.label.text }}</label>
+            {{ form.steuer_id(class_="form-control", placeholder="11-stellige Steuer-ID") }}
+            {% for err in form.steuer_id.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Street and Number -->
+          <div class="mb-3">
+            <label class="form-label">{{ form.strasse.label.text }}</label>
+            {{ form.strasse(class_="form-control", placeholder="Straße und Nr.") }}
+            {% for err in form.strasse.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Postal Code & City in one row -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label class="form-label">{{ form.plz.label.text }}</label>
+              {{ form.plz(class_="form-control", placeholder="PLZ") }}
+              {% for err in form.plz.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">{{ form.wohnort.label.text }}</label>
+              {{ form.wohnort(class_="form-control", placeholder="Ort") }}
+              {% for err in form.wohnort.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Email (optional) -->
+          <div class="mb-3">
+            <label class="form-label">{{ form.email.label.text }}</label>
+            {{ form.email(class_="form-control", placeholder="E-Mail-Adresse (optional)") }}
+            {% for err in form.email.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Telephone (optional) -->
+          <div class="mb-3">
+            <label class="form-label">{{ form.telefon.label.text }}</label>
+            {{ form.telefon(class_="form-control", placeholder="Telefonnummer (optional)") }}
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Weiter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+/* static/style.css */
+
+/* Use a system UI font for a more modern feel */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Card styling */
+.card {
+  border: none;
+  border-radius: 1rem;
+}
+
+/* Input focus outline color */
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); /* Bootstrap primary */
+}
+
+/* Button customization */
+.btn-primary {
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+/* Heading customization */
+.card-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+/* Reduce margins between inline radio checks */
+.form-check-inline .form-check-input {
+  margin-right: 0.25rem;
+}
+.form-check-inline .form-check-label {
+  margin-right: 1rem;
+}

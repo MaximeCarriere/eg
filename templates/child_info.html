@@ -1,0 +1,94 @@
+{# templates/child_info.html #}
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <h2 class="card-title mb-4 text-center">Schritt 1: Angaben zum Kind</h2>
+        <form method="POST" novalidate>
+          {{ form.hidden_tag() }}
+
+          {# 0. Ask: Is the child already born? #}
+          <div class="mb-4">
+            <label class="form-label">{{ form.is_born.label.text }}</label>
+            <div>
+              {% for subfield in form.is_born %}
+                <div class="form-check form-check-inline">
+                  {{ subfield(class_="form-check-input", onclick="toggleChildFields()") }}
+                  <label class="form-check-label" for="{{ subfield.id }}">{{ subfield.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.is_born.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          {# 1. The following fields only make sense if is_born == 'yes' #}
+          <div id="bornFields" style="display: none;">
+            <div class="mb-3">
+              <label class="form-label">{{ form.vorname.label.text }}</label>
+              {{ form.vorname(class_="form-control", placeholder="Vorname") }}
+              {% for err in form.vorname.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">{{ form.nachname.label.text }}</label>
+              {{ form.nachname(class_="form-control", placeholder="Nachname") }}
+              {% for err in form.nachname.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">{{ form.geburtsdatum.label.text }}</label>
+              {{ form.geburtsdatum(class_="form-control") }}
+              {% for err in form.geburtsdatum.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+            <div class="form-check mb-3">
+              {{ form.fruehgeboren(class_="form-check-input") }}
+              <label class="form-check-label" for="{{ form.fruehgeboren.id }}">{{ form.fruehgeboren.label.text }}</label>
+            </div>
+            <div class="form-check mb-3">
+              {{ form.behinderung(class_="form-check-input") }}
+              <label class="form-check-label" for="{{ form.behinderung.id }}">{{ form.behinderung.label.text }}</label>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">{{ form.multiple_births.label.text }}</label>
+              {{ form.multiple_births(class_="form-select") }}
+              {% for err in form.multiple_births.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Weiter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Simple script to toggle visibility of child‐detail fields #}
+<script>
+  function toggleChildFields() {
+    const yesRadio = document.querySelector('input[name="{{ form.is_born.name }}"][value="yes"]');
+    const bornFields = document.getElementById('bornFields');
+    if (yesRadio.checked) {
+      bornFields.style.display = 'block';
+    } else {
+      bornFields.style.display = 'none';
+    }
+  }
+
+  // On page load, run once to set initial state:
+  document.addEventListener('DOMContentLoaded', function() {
+    toggleChildFields();
+  });
+</script>
+{% endblock %}
