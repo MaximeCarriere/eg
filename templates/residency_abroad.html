@@ -1,0 +1,203 @@
+{# templates/residency_abroad.html #}
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <h2 class="card-title mb-4 text-center">Angaben zum Auslandsaufenthalt</h2>
+        <form method="POST" novalidate>
+          {{ form.hidden_tag() }}
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.reason_abroad.label.text }}</label>
+            {{ form.reason_abroad(class_="form-control", rows="4", placeholder="Geben Sie hier den Grund Ihres Auslandsaufenthalts an...") }}
+            {% for err in form.reason_abroad.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.date_of_departure.label.text }}</label>
+            {{ form.date_of_departure(class_="form-control") }}
+            {% for err in form.date_of_departure.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.expected_date_of_return.label.text }}</label>
+            {{ form.expected_date_of_return(class_="form-control") }}
+            {% for err in form.expected_date_of_return.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.foreign_country.label.text }}</label>
+            {{ form.foreign_country(class_="form-control", placeholder="Land") }}
+            {% for err in form.foreign_country.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-9">
+              <label class="form-label">{{ form.foreign_street.label.text }}</label>
+              {{ form.foreign_street(class_="form-control", placeholder="Straße") }}
+              {% for err in form.foreign_street.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">{{ form.foreign_housenumber.label.text }}</label>
+              {{ form.foreign_housenumber(class_="form-control", placeholder="Nr.") }}
+              {% for err in form.foreign_housenumber.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label class="form-label">{{ form.foreign_plz.label.text }}</label>
+              {{ form.foreign_plz(class_="form-control", placeholder="PLZ") }}
+              {% for err in form.foreign_plz.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">{{ form.foreign_city.label.text }}</label>
+              {{ form.foreign_city(class_="form-control", placeholder="Ort") }}
+              {% for err in form.foreign_city.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.employer_abroad.label.text }}</label>
+            {{ form.employer_abroad(class_="form-control", rows="3", placeholder="Name, Straße, Ort, Land des Arbeitgebers im Ausland") }}
+            {% for err in form.employer_abroad.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">{{ form.german_social_security_abroad.label.text }}</label>
+            <div>
+              {% for sub in form.german_social_security_abroad %}
+                <div class="form-check form-check-inline">
+                  {{ sub(class_="form-check-input", id=sub.id) }}
+                  <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.german_social_security_abroad.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div id="germanSsTypesDiv" style="display: none;">
+            <label class="form-label d-block">{{ form.german_social_security_types.label.text }}</label>
+            <div class="form-check form-check-inline">
+                {{ form.german_ss_kranken(class_="form-check-input") }}
+                <label class="form-check-label" for="{{ form.german_ss_kranken.id }}">{{ form.german_ss_kranken.label.text }}</label>
+            </div>
+            <div class="form-check form-check-inline">
+                {{ form.german_ss_pflege(class_="form-check-input") }}
+                <label class="form-check-label" for="{{ form.german_ss_pflege.id }}">{{ form.german_ss_pflege.label.text }}</label>
+            </div>
+            <div class="form-check form-check-inline">
+                {{ form.german_ss_renten(class_="form-check-input") }}
+                <label class="form-check-label" for="{{ form.german_ss_renten.id }}">{{ form.german_ss_renten.label.text }}</label>
+            </div>
+            <div class="form-check form-check-inline">
+                {{ form.german_ss_arbeitslosen(class_="form-check-input") }}
+                <label class="form-check-label" for="{{ form.german_ss_arbeitslosen.id }}">{{ form.german_ss_arbeitslosen.label.text }}</label>
+            </div>
+            {% for err in form.german_social_security_types.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">{{ form.foreign_social_security.label.text }}</label>
+            <div>
+              {% for sub in form.foreign_social_security %}
+                <div class="form-check form-check-inline">
+                  {{ sub(class_="form-check-input", id=sub.id) }}
+                  <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.foreign_social_security.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div id="foreignSsDetailsDiv" style="display: none;">
+            <div class="mb-3">
+              <label class="form-label">{{ form.foreign_social_security_details.label.text }}</label>
+              {{ form.foreign_social_security_details(class_="form-control", rows="2", placeholder="Art der Sozialversicherung im Gastland") }}
+              {% for err in form.foreign_social_security_details.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Weiter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const germanSsRadios = document.querySelectorAll('input[name="german_social_security_abroad"]');
+    const germanSsTypesDiv = document.getElementById('germanSsTypesDiv');
+    const foreignSsRadios = document.querySelectorAll('input[name="foreign_social_security"]');
+    const foreignSsDetailsDiv = document.getElementById('foreignSsDetailsDiv');
+
+    function toggleGermanSsTypes() {
+      const selectedValue = Array.from(germanSsRadios).find(radio => radio.checked)?.value;
+      if (selectedValue === 'yes') {
+        germanSsTypesDiv.style.display = 'block';
+      } else {
+        germanSsTypesDiv.style.display = 'none';
+        // Uncheck all German SS type checkboxes when hidden
+        document.querySelectorAll('#germanSsTypesDiv input[type="checkbox"]').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+      }
+    }
+
+    function toggleForeignSsDetails() {
+      const selectedValue = Array.from(foreignSsRadios).find(radio => radio.checked)?.value;
+      if (selectedValue === 'yes') {
+        foreignSsDetailsDiv.style.display = 'block';
+      } else {
+        foreignSsDetailsDiv.style.display = 'none';
+        // Clear foreign SS details when hidden
+        const detailsInput = document.getElementById('{{ form.foreign_social_security_details.id }}');
+        if (detailsInput) detailsInput.value = '';
+      }
+    }
+
+    germanSsRadios.forEach(radio => {
+      radio.addEventListener('change', toggleGermanSsTypes);
+    });
+
+    foreignSsRadios.forEach(radio => {
+      radio.addEventListener('change', toggleForeignSsDetails);
+    });
+
+    // Initial check on page load to set correct display based on pre-filled data
+    toggleGermanSsTypes();
+    toggleForeignSsDetails();
+  });
+</script>
+{% endblock %}

@@ -6,17 +6,17 @@
     <div class="card shadow-sm rounded-4">
       <div class="card-body p-4">
         <h2 class="card-title mb-4 text-center">Schritt 1: Angaben zum Kind</h2>
-        <form method="POST" novalidate>
+        <form method="POST" id="childInfoForm">
           {{ form.hidden_tag() }}
 
-          {# 0. Ask: Is the child already born? #}
+          {# 0. Ist das Kind geboren? #}
           <div class="mb-4">
             <label class="form-label">{{ form.is_born.label.text }}</label>
             <div>
-              {% for subfield in form.is_born %}
+              {% for sub in form.is_born %}
                 <div class="form-check form-check-inline">
-                  {{ subfield(class_="form-check-input", onclick="toggleChildFields()") }}
-                  <label class="form-check-label" for="{{ subfield.id }}">{{ subfield.label.text }}</label>
+                  {{ sub(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
                 </div>
               {% endfor %}
             </div>
@@ -25,48 +25,70 @@
             {% endfor %}
           </div>
 
-          {# 1. The following fields only make sense if is_born == 'yes' #}
-          <div id="bornFields" style="display: none;">
+          {# 1. Felder nur wenn geboren #}
+          <div id="bornFields" style="display:none;">
+            <!-- Vorname -->
             <div class="mb-3">
-              <label class="form-label">{{ form.vorname.label.text }}</label>
+              <label class="form-label">{{ form.vorname.label.text }} <span class="text-danger">*</span></label>
               {{ form.vorname(class_="form-control", placeholder="Vorname") }}
               {% for err in form.vorname.errors %}
                 <div class="text-danger small mt-1">{{ err }}</div>
               {% endfor %}
             </div>
+            <!-- Nachname -->
             <div class="mb-3">
-              <label class="form-label">{{ form.nachname.label.text }}</label>
+              <label class="form-label">{{ form.nachname.label.text }} <span class="text-danger">*</span></label>
               {{ form.nachname(class_="form-control", placeholder="Nachname") }}
               {% for err in form.nachname.errors %}
                 <div class="text-danger small mt-1">{{ err }}</div>
               {% endfor %}
             </div>
+            <!-- Geburtsdatum -->
             <div class="mb-3">
-              <label class="form-label">{{ form.geburtsdatum.label.text }}</label>
+              <label class="form-label">{{ form.geburtsdatum.label.text }} <span class="text-danger">*</span></label>
               {{ form.geburtsdatum(class_="form-control") }}
               {% for err in form.geburtsdatum.errors %}
                 <div class="text-danger small mt-1">{{ err }}</div>
               {% endfor %}
             </div>
+            <!-- Frühgeboren -->
             <div class="form-check mb-3">
               {{ form.fruehgeboren(class_="form-check-input") }}
               <label class="form-check-label" for="{{ form.fruehgeboren.id }}">{{ form.fruehgeboren.label.text }}</label>
             </div>
+            <!-- Urspr. Termin -->
+            <div id="dueDateBlock" class="mb-3" style="display:none;">
+              <label class="form-label">{{ form.due_date.label.text }}</label>
+              {{ form.due_date(class_="form-control") }}
+              {% for err in form.due_date.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+            <!-- Behinderung -->
             <div class="form-check mb-3">
               {{ form.behinderung(class_="form-check-input") }}
               <label class="form-check-label" for="{{ form.behinderung.id }}">{{ form.behinderung.label.text }}</label>
             </div>
+            <!-- Anzahl Kinder -->
             <div class="mb-3">
-              <label class="form-label">{{ form.multiple_births.label.text }}</label>
+              <label class="form-label">{{ form.multiple_births.label.text }} <span class="text-danger">*</span></label>
               {{ form.multiple_births(class_="form-select") }}
               {% for err in form.multiple_births.errors %}
                 <div class="text-danger small mt-1">{{ err }}</div>
               {% endfor %}
             </div>
+            <!-- Namen bei Mehrlingen -->
+            <div id="multiNames" style="display:none;">
+              <label class="form-label">Namen weiterer Kinder</label>
+              {{ form.multi_name_1(class_="form-control mb-2", placeholder="2. Kind") }}
+              {{ form.multi_name_2(class_="form-control mb-2", placeholder="3. Kind") }}
+              {{ form.multi_name_3(class_="form-control mb-2", placeholder="4. Kind") }}
+              {{ form.multi_name_4(class_="form-control",   placeholder="5. Kind") }}
+            </div>
           </div>
 
           <div class="d-grid">
-            <button type="submit" class="btn btn-primary btn-lg">Weiter</button>
+            {{ form.submit(class_="btn btn-primary btn-lg") }}
           </div>
         </form>
       </div>
@@ -74,21 +96,108 @@
   </div>
 </div>
 
-{# Simple script to toggle visibility of child‐detail fields #}
 <script>
-  function toggleChildFields() {
-    const yesRadio = document.querySelector('input[name="{{ form.is_born.name }}"][value="yes"]');
-    const bornFields = document.getElementById('bornFields');
-    if (yesRadio.checked) {
-      bornFields.style.display = 'block';
-    } else {
-      bornFields.style.display = 'none';
-    }
-  }
-
-  // On page load, run once to set initial state:
   document.addEventListener('DOMContentLoaded', function() {
-    toggleChildFields();
+    const bornRadios = document.querySelectorAll('input[name="{{ form.is_born.name }}"]');
+    const fruehCheckbox = document.getElementById('{{ form.fruehgeboren.id }}');
+    const multipleBirthsSelect = document.getElementById('{{ form.multiple_births.id }}');
+    const bornFields = document.getElementById('bornFields');
+    const dueDateBlock = document.getElementById('dueDateBlock');
+    const multiNames = document.getElementById('multiNames');
+
+    function toggleBornFields() {
+      const bornYes = document.querySelector('input[name="{{ form.is_born.name }}"][value="yes"]');
+      const isChildBorn = bornYes && bornYes.checked;
+      
+      bornFields.style.display = isChildBorn ? 'block' : 'none';
+      
+      // DON'T disable fields - just clear them when hidden
+      if (!isChildBorn) {
+        clearChildFields();
+      }
+      
+      toggleDueDateField();
+    }
+
+    function toggleDueDateField() {
+      const bornYes = document.querySelector('input[name="{{ form.is_born.name }}"][value="yes"]');
+      const isChildBorn = bornYes && bornYes.checked;
+      const isFruehgeboren = fruehCheckbox && fruehCheckbox.checked;
+      
+      dueDateBlock.style.display = (isChildBorn && isFruehgeboren) ? 'block' : 'none';
+      
+      // Clear due date if not needed
+      if (!isChildBorn || !isFruehgeboren) {
+        const dueDateField = document.getElementById('{{ form.due_date.id }}');
+        if (dueDateField) dueDateField.value = '';
+      }
+    }
+
+    function toggleMultiNames() {
+      const count = multipleBirthsSelect ? multipleBirthsSelect.value : '1';
+      multiNames.style.display = (count && count !== '1') ? 'block' : 'none';
+      
+      // Clear multi-name fields if not needed
+      if (!count || count === '1') {
+        const multiFields = [
+          '{{ form.multi_name_1.id }}',
+          '{{ form.multi_name_2.id }}',
+          '{{ form.multi_name_3.id }}',
+          '{{ form.multi_name_4.id }}'
+        ];
+        
+        multiFields.forEach(fieldId => {
+          const field = document.getElementById(fieldId);
+          if (field) field.value = '';
+        });
+      }
+    }
+
+    function clearChildFields() {
+      // Clear form fields when child is not born - but DON'T disable them
+      const fieldsToClear = [
+        '{{ form.vorname.id }}',
+        '{{ form.nachname.id }}',
+        '{{ form.geburtsdatum.id }}',
+        '{{ form.due_date.id }}',
+        '{{ form.multi_name_1.id }}',
+        '{{ form.multi_name_2.id }}',
+        '{{ form.multi_name_3.id }}',
+        '{{ form.multi_name_4.id }}'
+      ];
+      
+      fieldsToClear.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.value = '';
+        }
+      });
+      
+      // Reset checkboxes
+      if (fruehCheckbox) fruehCheckbox.checked = false;
+      const behinderungCheckbox = document.getElementById('{{ form.behinderung.id }}');
+      if (behinderungCheckbox) behinderungCheckbox.checked = false;
+      
+      // Reset select
+      if (multipleBirthsSelect) multipleBirthsSelect.value = '1';
+    }
+
+    // Add event listeners
+    bornRadios.forEach(radio => {
+      radio.addEventListener('change', toggleBornFields);
+    });
+
+    if (fruehCheckbox) {
+      fruehCheckbox.addEventListener('change', toggleDueDateField);
+    }
+
+    if (multipleBirthsSelect) {
+      multipleBirthsSelect.addEventListener('change', toggleMultiNames);
+    }
+
+    // Initialize on page load
+    toggleBornFields();
+    toggleMultiNames();
   });
 </script>
 {% endblock %}

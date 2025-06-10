@@ -1,0 +1,333 @@
+{# templates/income_before_birth.html #}
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <div class="card shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <h2 class="card-title mb-4 text-center">Schritt: Einkommen vor der Geburt</h2>
+        <form method="POST" id="incomeBeforeBirthForm" novalidate>
+          {{ form.hidden_tag() }}
+
+          {# 5.1 Bemessungszeitraum #}
+          <h4 class="mb-3">5.1 Bemessungszeitraum (Assessment Period)</h4>
+          <div class="mb-4">
+            <label class="form-label">{{ form.assessment_period_type.label.text }}</label>
+            <div>
+              {% for sub in form.assessment_period_type %}
+                <div class="form-check form-check-inline">
+                  {{ sub(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.assessment_period_type.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div id="otherAssessmentPeriodFields" class="mb-4" style="display:none;">
+            <div class="mb-3">
+              <label class="form-label">{{ form.other_assessment_reason.label.text }}</label>
+              {{ form.other_assessment_reason(class_="form-control") }}
+              {% for err in form.other_assessment_reason.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">{{ form.other_assessment_start_month.label.text }}</label>
+                {{ form.other_assessment_start_month(class_="form-select") }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">{{ form.other_assessment_start_year.label.text }}</label>
+                {{ form.other_assessment_start_year(class_="form-control", placeholder="JJJJ") }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">{{ form.other_assessment_end_month.label.text }}</label>
+                {{ form.other_assessment_end_month(class_="form-select") }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">{{ form.other_assessment_end_year.label.text }}</label>
+                {{ form.other_assessment_end_year(class_="form-control", placeholder="JJJJ") }}
+              </div>
+            </div>
+            {% for err in form.other_assessment_start_month.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+            {% for err in form.other_assessment_start_year.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          {# 5.2 Einkommen aus nichtselbständiger Arbeit #}
+          <h4 class="mb-3">5.2 Einkommen aus nichtselbständiger Arbeit</h4>
+          <div class="mb-4">
+            <label class="form-label">{{ form.has_employed_income.label.text }}</label>
+            <div>
+              {% for sub in form.has_employed_income %}
+                <div class="form-check form-check-inline">
+                  {{ sub(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.has_employed_income.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div id="employedIncomeFields" style="display:none;">
+            <div class="mb-3">
+              <label class="form-label">{{ form.employer_name.label.text }}</label>
+              {{ form.employer_name(class_="form-control", placeholder="Name des Arbeitgebers") }}
+              {% for err in form.employer_name.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+
+            <h5 class="mb-3">Bruttoarbeitslohn im jeweiligen Kalendermonat:</h5>
+            <div class="row">
+                          {% for i in range(1, 13) %}
+                            {% set field_name = 'gross_income_month_' ~ i %}
+                            {% set field = form[field_name] %} {# Access the bound field by its string name #}
+                            <div class="col-md-6 mb-3">
+                              <label class="form-label">{{ field.label.text }}</label>
+                              {{ field(class_="form-control", placeholder="z.B. 1234.56") }}
+                              {% for err in field.errors %}
+                                <div class="text-danger small mt-1">{{ err }}</div>
+                              {% endfor %}
+                            </div>
+                          {% endfor %}
+                        </div>
+            
+
+            <h5 class="mb-3 mt-4">5.3 Besondere Einnahmen:</h5>
+            {# Mutterschaftsgeld #}
+            <div class="form-check mb-2">
+              {{ form.has_mutterschaftsgeld(class_="form-check-input") }}
+              <label class="form-check-label" for="{{ form.has_mutterschaftsgeld.id }}">{{ form.has_mutterschaftsgeld.label.text }}</label>
+            </div>
+            <div id="mutterschaftsgeldAmount" class="mb-3 ps-4" style="display:none;">
+              <label class="form-label">{{ form.mutterschaftsgeld_amount.label.text }}</label>
+              {{ form.mutterschaftsgeld_amount(class_="form-control", placeholder="Euro") }}
+              {% for err in form.mutterschaftsgeld_amount.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+
+            {# Krankentagegeld #}
+            <div class="form-check mb-2">
+              {{ form.has_krankentagegeld(class_="form-check-input") }}
+              <label class="form-check-label" for="{{ form.has_krankentagegeld.id }}">{{ form.has_krankentagegeld.label.text }}</label>
+            </div>
+            <div id="krankentagegeldAmount" class="mb-3 ps-4" style="display:none;">
+              <label class="form-label">{{ form.krankentagegeld_amount.label.text }}</label>
+              {{ form.krankentagegeld_amount(class_="form-control", placeholder="Euro") }}
+              {% for err in form.krankentagegeld_amount.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+
+            {# Kurzarbeitergeld #}
+            <div class="form-check mb-2">
+              {{ form.has_kurzarbeitergeld(class_="form-check-input") }}
+              <label class="form-check-label" for="{{ form.has_kurzarbeitergeld.id }}">{{ form.has_kurzarbeitergeld.label.text }}</label>
+            </div>
+            <div id="kurzarbeitergeldAmount" class="mb-3 ps-4" style="display:none;">
+              <label class="form-label">{{ form.kurzarbeitergeld_amount.label.text }}</label>
+              {{ form.kurzarbeitergeld_amount(class_="form-control", placeholder="Euro") }}
+              {% for err in form.kurzarbeitergeld_amount.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+
+            {# Elterngeld für älteres Kind #}
+            <div class="form-check mb-2">
+              {{ form.has_elterngeld_older_child(class_="form-check-input") }}
+              <label class="form-check-label" for="{{ form.has_elterngeld_older_child.id }}">{{ form.has_elterngeld_older_child.label.text }}</label>
+            </div>
+            <div id="elterngeldOlderChildAmount" class="mb-3 ps-4" style="display:none;">
+              <label class="form-label">{{ form.elterngeld_older_child_amount.label.text }}</label>
+              {{ form.elterngeld_older_child_amount(class_="form-control", placeholder="Euro") }}
+              {% for err in form.elterngeld_older_child_amount.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+
+            {# Sonstige Einnahmen #}
+            <div class="form-check mb-2">
+              {{ form.has_other_income(class_="form-check-input") }}
+              <label class="form-check-label" for="{{ form.has_other_income.id }}">{{ form.has_other_income.label.text }}</label>
+            </div>
+            <div id="otherIncomeAmount" class="mb-3 ps-4" style="display:none;">
+              <label class="form-label">{{ form.other_income_amount.label.text }}</label>
+              {{ form.other_income_amount(class_="form-control", placeholder="Euro") }}
+              {% for err in form.other_income_amount.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+          </div> {# End of employedIncomeFields #}
+
+          {# 5.4 Einkommen aus selbständiger Tätigkeit #}
+          <h4 class="mb-3 mt-4">5.4 Einkommen aus selbständiger Tätigkeit, Gewerbebetrieb, Land- und Forstwirtschaft</h4>
+          <div class="mb-4">
+            <label class="form-label">{{ form.has_self_employed_income.label.text }}</label>
+            <div>
+              {% for sub in form.has_self_employed_income %}
+                <div class="form-check form-check-inline">
+                  {{ sub(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.has_self_employed_income.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div id="selfEmployedIncomeFields" style="display:none;">
+            <div class="mb-3">
+              <label class="form-label">{{ form.self_employment_activity_type.label.text }}</label>
+              {{ form.self_employment_activity_type(class_="form-control", placeholder="z.B. Freiberufler, Einzelunternehmen") }}
+              {% for err in form.self_employment_activity_type.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">{{ form.profit_assessment_start_month.label.text }}</label>
+                {{ form.profit_assessment_start_month(class_="form-select") }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">{{ form.profit_assessment_start_year.label.text }}</label>
+                {{ form.profit_assessment_start_year(class_="form-control", placeholder="JJJJ") }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">{{ form.profit_assessment_end_month.label.text }}</label>
+                {{ form.profit_assessment_end_month(class_="form-select") }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">{{ form.profit_assessment_end_year.label.text }}</label>
+                {{ form.profit_assessment_end_year(class_="form-control", placeholder="JJJJ") }}
+              </div>
+            </div>
+            {% for err in form.profit_assessment_start_month.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+            {% for err in form.profit_assessment_start_year.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+            <div class="mb-3">
+              <label class="form-label">{{ form.profit_amount.label.text }}</label>
+              {{ form.profit_amount(class_="form-control", placeholder="Euro") }}
+              {% for err in form.profit_amount.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+          </div> {# End of selfEmployedIncomeFields #}
+
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">{{ form.submit.label.text }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const assessmentPeriodTypeRadios = document.querySelectorAll('input[name="assessment_period_type"]');
+    const otherAssessmentPeriodFields = document.getElementById('otherAssessmentPeriodFields');
+
+    const hasEmployedIncomeRadios = document.querySelectorAll('input[name="has_employed_income"]');
+    const employedIncomeFields = document.getElementById('employedIncomeFields');
+
+    const hasSelfEmployedIncomeRadios = document.querySelectorAll('input[name="has_self_employed_income"]');
+    const selfEmployedIncomeFields = document.getElementById('selfEmployedIncomeFields');
+
+    // Special income checkboxes and their corresponding amount fields
+    const mutterschaftsgeldCheckbox = document.getElementById('{{ form.has_mutterschaftsgeld.id }}');
+    const mutterschaftsgeldAmountDiv = document.getElementById('mutterschaftsgeldAmount');
+
+    const krankentagegeldCheckbox = document.getElementById('{{ form.has_krankentagegeld.id }}');
+    const krankentagegeldAmountDiv = document.getElementById('krankentagegeldAmount');
+
+    const kurzarbeitergeldCheckbox = document.getElementById('{{ form.has_kurzarbeitergeld.id }}');
+    const kurzarbeitergeldAmountDiv = document.getElementById('kurzarbeitergeldAmount');
+
+    const elterngeldOlderChildCheckbox = document.getElementById('{{ form.has_elterngeld_older_child.id }}');
+    const elterngeldOlderChildAmountDiv = document.getElementById('elterngeldOlderChildAmount');
+
+    const otherIncomeCheckbox = document.getElementById('{{ form.has_other_income.id }}');
+    const otherIncomeAmountDiv = document.getElementById('otherIncomeAmount');
+
+
+    function toggleVisibility(radioButtons, targetDiv) {
+      radioButtons.forEach(radio => {
+        if (radio.checked) {
+          if (radio.value === 'other') { // For assessment period
+            targetDiv.style.display = 'block';
+          } else if (radio.value === 'yes') { // For income sections
+            targetDiv.style.display = 'block';
+          } else {
+            targetDiv.style.display = 'none';
+          }
+        }
+      });
+    }
+
+    function toggleAmountField(checkbox, amountDiv) {
+        if (checkbox.checked) {
+            amountDiv.style.display = 'block';
+        } else {
+            amountDiv.style.display = 'none';
+            // Optionally clear the value when hidden
+            const amountField = amountDiv.querySelector('input[type="text"]');
+            if (amountField) amountField.value = '';
+        }
+    }
+
+
+    // Event listeners for assessment period
+    assessmentPeriodTypeRadios.forEach(radio => {
+      radio.addEventListener('change', () => toggleVisibility(assessmentPeriodTypeRadios, otherAssessmentPeriodFields));
+    });
+
+    // Event listeners for employed income
+    hasEmployedIncomeRadios.forEach(radio => {
+      radio.addEventListener('change', () => toggleVisibility(hasEmployedIncomeRadios, employedIncomeFields));
+    });
+
+    // Event listeners for self-employed income
+    hasSelfEmployedIncomeRadios.forEach(radio => {
+      radio.addEventListener('change', () => toggleVisibility(hasSelfEmployedIncomeRadios, selfEmployedIncomeFields));
+    });
+
+    // Event listeners for special income checkboxes
+    mutterschaftsgeldCheckbox.addEventListener('change', () => toggleAmountField(mutterschaftsgeldCheckbox, mutterschaftsgeldAmountDiv));
+    krankentagegeldCheckbox.addEventListener('change', () => toggleAmountField(krankentagegeldCheckbox, krankentagegeldAmountDiv));
+    kurzarbeitergeldCheckbox.addEventListener('change', () => toggleAmountField(kurzarbeitergeldCheckbox, kurzarbeitergeldAmountDiv));
+    elterngeldOlderChildCheckbox.addEventListener('change', () => toggleAmountField(elterngeldOlderChildCheckbox, elterngeldOlderChildAmountDiv));
+    otherIncomeCheckbox.addEventListener('change', () => toggleAmountField(otherIncomeCheckbox, otherIncomeAmountDiv));
+
+
+    // Initial state setup on page load
+    toggleVisibility(assessmentPeriodTypeRadios, otherAssessmentPeriodFields);
+    toggleVisibility(hasEmployedIncomeRadios, employedIncomeFields);
+    toggleVisibility(hasSelfEmployedIncomeRadios, selfEmployedIncomeFields);
+
+    toggleAmountField(mutterschaftsgeldCheckbox, mutterschaftsgeldAmountDiv);
+    toggleAmountField(krankentagegeldCheckbox, krankentagegeldAmountDiv);
+    toggleAmountField(kurzarbeitergeldCheckbox, kurzarbeitergeldAmountDiv);
+    toggleAmountField(elterngeldOlderChildCheckbox, elterngeldOlderChildAmountDiv);
+    toggleAmountField(otherIncomeCheckbox, otherIncomeAmountDiv);
+
+  });
+</script>
+{% endblock %}

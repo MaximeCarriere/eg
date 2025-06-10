@@ -1,0 +1,49 @@
+{# templates/bank_info.html #}
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <h2 class="card-title mb-4 text-center">Schritt 5: Bankverbindung</h2>
+        <form method="POST" novalidate>
+          {{ form.hidden_tag() }}
+
+          <!-- IBAN -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.iban.label.text }}</label>
+            {{ form.iban(class_="form-control") }}
+            {% for err in form.iban.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+            <div class="form-text">z. B. DE89370400440532013000 (ohne Leerzeichen möglich)</div>
+          </div>
+
+          <!-- BIC (optional) -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.bic.label.text }}</label>
+            {{ form.bic(class_="form-control") }}
+            {% for err in form.bic.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+            <div class="form-text">z. B. COBADEFFXXX (optional)</div>
+          </div>
+
+          <!-- Kontoinhaber/in -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.account_holder.label.text }}</label>
+            {{ form.account_holder(class_="form-control") }}
+            {% for err in form.account_holder.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Fertig</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

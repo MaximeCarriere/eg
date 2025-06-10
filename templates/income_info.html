@@ -1,0 +1,72 @@
+{# templates/income_info.html #}
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <h2 class="card-title mb-4 text-center">Schritt 4: Einkommen vor der Geburt</h2>
+        <form method="POST" novalidate>
+          {{ form.hidden_tag() }}
+
+          <!-- 1. Einkunftsart -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.income_type.label.text }}</label>
+            <div>
+              {% for sub in form.income_type %}
+                <div class="form-check">
+                  {{ sub(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.income_type.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- 2. Betrag (falls Einkommen) -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.income_amount.label.text }}</label>
+            {{ form.income_amount(class_="form-control") }}
+            {% for err in form.income_amount.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+            <div class="form-text">Bruttobetrag in Euro. z. B. 24000</div>
+          </div>
+
+          <!-- 3. Einkommensersatzleistungen -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.received_benefits.label.text }}</label>
+            <div>
+              {% for sub in form.received_benefits %}
+                <div class="form-check form-check-inline">
+                  {{ sub(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.received_benefits.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- 4. Details der Leistungen -->
+          <div class="mb-4">
+            <label class="form-label">{{ form.benefits_details.label.text }}</label>
+            {{ form.benefits_details(class_="form-control") }}
+            {% for err in form.benefits_details.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+            <div class="form-text">z. B. Arbeitslosengeld, Kurzarbeitergeld, Bürgergeld …</div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Weiter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{# templates/summary.html #}
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <h2 class="card-title mb-4 text-center">Zusammenfassung & PDF-Generierung</h2>
+        <p>Ihre Eingaben wurden erfolgreich gespeichert. Sie können nun das Antragsformular als PDF generieren.</p>
+
+        <div class="d-grid mt-4">
+          <a href="{{ url_for('generate_pdf') }}" class="btn btn-success btn-lg">PDF Generieren</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

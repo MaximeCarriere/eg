@@ -9,7 +9,6 @@
         <form method="POST" novalidate>
           {{ form.hidden_tag() }}
 
-          <!-- Other-parent status (Alleinerziehend / Both / Other already applied) -->
           <div class="mb-4">
             <label class="form-label">{{ form.other_parent_status.label.text }}</label>
             <div>
@@ -25,7 +24,6 @@
             {% endfor %}
           </div>
 
-          <!-- First Name -->
           <div class="mb-3">
             <label class="form-label">{{ form.vorname.label.text }}</label>
             {{ form.vorname(class_="form-control", placeholder="Vorname") }}
@@ -34,7 +32,6 @@
             {% endfor %}
           </div>
 
-          <!-- Last Name -->
           <div class="mb-3">
             <label class="form-label">{{ form.nachname.label.text }}</label>
             {{ form.nachname(class_="form-control", placeholder="Nachname") }}
@@ -43,7 +40,6 @@
             {% endfor %}
           </div>
 
-          <!-- Birth Date -->
           <div class="mb-3">
             <label class="form-label">{{ form.geburtsdatum.label.text }}</label>
             {{ form.geburtsdatum(class_="form-control") }}
@@ -52,7 +48,6 @@
             {% endfor %}
           </div>
 
-          <!-- Gender -->
           <div class="mb-3">
             <label class="form-label">{{ form.geschlecht.label.text }}</label>
             {{ form.geschlecht(class_="form-select") }}
@@ -61,7 +56,6 @@
             {% endfor %}
           </div>
 
-          <!-- Steuer-ID -->
           <div class="mb-3">
             <label class="form-label">{{ form.steuer_id.label.text }}</label>
             {{ form.steuer_id(class_="form-control", placeholder="11-stellige Steuer-ID") }}
@@ -70,16 +64,30 @@
             {% endfor %}
           </div>
 
-          <!-- Street and Number -->
+          <div class="row mb-3">
+            <div class="col-md-9">
+              <label class="form-label">{{ form.strasse.label.text }}</label>
+              {{ form.strasse(class_="form-control", placeholder="Straße") }}
+              {% for err in form.strasse.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">{{ form.hausnummer.label.text }}</label>
+              {{ form.hausnummer(class_="form-control", placeholder="Nr.") }}
+              {% for err in form.hausnummer.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+          </div>
           <div class="mb-3">
-            <label class="form-label">{{ form.strasse.label.text }}</label>
-            {{ form.strasse(class_="form-control", placeholder="Straße und Nr.") }}
-            {% for err in form.strasse.errors %}
+            <label class="form-label">{{ form.adresszusatz.label.text }}</label>
+            {{ form.adresszusatz(class_="form-control", placeholder="Adresszusatz (z.B. c/o Name)") }}
+            {% for err in form.adresszusatz.errors %}
               <div class="text-danger small mt-1">{{ err }}</div>
             {% endfor %}
           </div>
 
-          <!-- Postal Code & City in one row -->
           <div class="row g-3 mb-3">
             <div class="col-md-4">
               <label class="form-label">{{ form.plz.label.text }}</label>
@@ -97,7 +105,6 @@
             </div>
           </div>
 
-          <!-- Email (optional) -->
           <div class="mb-3">
             <label class="form-label">{{ form.email.label.text }}</label>
             {{ form.email(class_="form-control", placeholder="E-Mail-Adresse (optional)") }}
@@ -106,10 +113,49 @@
             {% endfor %}
           </div>
 
-          <!-- Telephone (optional) -->
           <div class="mb-3">
             <label class="form-label">{{ form.telefon.label.text }}</label>
             {{ form.telefon(class_="form-control", placeholder="Telefonnummer (optional)") }}
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">{{ form.lives_in_germany.label.text }}</label>
+            <div>
+              {% for sub in form.lives_in_germany %}
+                <div class="form-check form-check-inline">
+                  {{ sub(class_="form-check-input") }}
+                  <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
+                </div>
+              {% endfor %}
+            </div>
+            {% for err in form.lives_in_germany.errors %}
+              <div class="text-danger small mt-1">{{ err }}</div>
+            {% endfor %}
+          </div>
+
+          <div id="residencyDetails" style="display: none;"> {# Conditional display based on lives_in_germany 'yes' #}
+            <div class="mb-4">
+              <label class="form-label">{{ form.residency_start_date_type.label.text }}</label>
+              <div>
+                {% for sub in form.residency_start_date_type %}
+                  <div class="form-check form-check-inline">
+                    {{ sub(class_="form-check-input") }}
+                    <label class="form-check-label" for="{{ sub.id }}">{{ sub.label.text }}</label>
+                  </div>
+                {% endfor %}
+              </div>
+              {% for err in form.residency_start_date_type.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3" id="residencyStartDateField" style="display: none;"> {# Conditional display based on residency_start_date_type 'date' #}
+              <label class="form-label">{{ form.residency_start_date.label.text }}</label>
+              {{ form.residency_start_date(class_="form-control") }}
+              {% for err in form.residency_start_date.errors %}
+                <div class="text-danger small mt-1">{{ err }}</div>
+              {% endfor %}
+            </div>
           </div>
 
           <div class="d-grid">
@@ -120,4 +166,52 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const livesInGermanyRadios = document.querySelectorAll('input[name="lives_in_germany"]');
+    const residencyDetailsDiv = document.getElementById('residencyDetails');
+    const residencyStartDateTypeRadios = document.querySelectorAll('input[name="residency_start_date_type"]');
+    const residencyStartDateField = document.getElementById('residencyStartDateField');
+
+    function toggleResidencyDetails() {
+      // Check for the checked radio button within the lives_in_germany group
+      const selectedValue = Array.from(livesInGermanyRadios).find(radio => radio.checked)?.value;
+      if (selectedValue === 'yes') {
+        residencyDetailsDiv.style.display = 'block';
+      } else {
+        residencyDetailsDiv.style.display = 'none';
+        // Clear fields if hidden
+        residencyStartDateTypeRadios.forEach(radio => radio.checked = false); // Uncheck residency type
+        residencyStartDateField.style.display = 'none'; // Hide date field
+        const residencyStartDateInput = document.getElementById('{{ form.residency_start_date.id }}');
+        if (residencyStartDateInput) residencyStartDateInput.value = ''; // Clear date input
+      }
+    }
+
+    function toggleResidencyStartDate() {
+      // Check for the checked radio button within the residency_start_date_type group
+      const selectedValue = Array.from(residencyStartDateTypeRadios).find(radio => radio.checked)?.value;
+      if (selectedValue === 'date') {
+        residencyStartDateField.style.display = 'block';
+      } else {
+        residencyStartDateField.style.display = 'none';
+        const residencyStartDateInput = document.getElementById('{{ form.residency_start_date.id }}');
+        if (residencyStartDateInput) residencyStartDateInput.value = ''; // Clear date input
+      }
+    }
+
+    livesInGermanyRadios.forEach(radio => {
+      radio.addEventListener('change', toggleResidencyDetails);
+    });
+
+    residencyStartDateTypeRadios.forEach(radio => {
+      radio.addEventListener('change', toggleResidencyStartDate);
+    });
+
+    // Initial check on page load to set correct display based on pre-filled data or defaults
+    toggleResidencyDetails();
+    toggleResidencyStartDate();
+  });
+</script>
 {% endblock %}
